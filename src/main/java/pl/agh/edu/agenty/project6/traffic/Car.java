@@ -1,5 +1,6 @@
 package pl.agh.edu.agenty.project6.traffic;
 
+
 public class Car implements Runnable {
 	private int velocity;
 	private int position;
@@ -28,26 +29,33 @@ public class Car implements Runnable {
 			}
 		}
 		
-		System.out.println("Car got to the end of the road!");
+		System.out.println("Car reached the end of the road!");
 	}
 
 	private void acceleration() {
 		if (velocity < RoadConstants.MAX_SPEED) {
-			velocity++;
+			setVelocity(velocity+1);
 		}
 	}
 	
 	private void braking() {
-		velocity = Math.min(velocity, road.getDistanceAhead(position));
+		setVelocity(Math.min(velocity, road.getDistanceAhead(position)));
 	}
 	
 	public void randomize() {
-		
+		setVelocity(ProbabilityGenerator.handleChangeProbability(velocity));
 	}
 	
 	public void move() {
 		notOutOfRoad = road.move(position, velocity);
 		position += velocity;
+	}
+	
+	public void setVelocity(int velocity) {
+		if (velocity > 0)
+			this.velocity = velocity;
+		else 
+			this.velocity = 0;
 	}
 
 }

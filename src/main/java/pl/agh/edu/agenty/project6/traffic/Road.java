@@ -7,6 +7,7 @@ import java.util.concurrent.CyclicBarrier;
 
 public class Road {
 	public List<Boolean> road;
+	/* tmp printing solution - waits for other threads */
 	private CyclicBarrier barrier;
 	private long loggingThread;
 	
