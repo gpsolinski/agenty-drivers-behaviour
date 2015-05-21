@@ -1,8 +1,8 @@
-package pl.agh.edu.agenty.project6;
+package pl.edu.agh.agenty.project6;
 
-import pl.agh.edu.agenty.project6.traffic.Car;
-import pl.agh.edu.agenty.project6.traffic.ProbabilityGenerator;
-import pl.agh.edu.agenty.project6.traffic.Road;
+import pl.edu.agh.agenty.project6.traffic.Car;
+import pl.edu.agh.agenty.project6.traffic.ProbabilityGenerator;
+import pl.edu.agh.agenty.project6.traffic.Road;
 
 
 public class Main {
