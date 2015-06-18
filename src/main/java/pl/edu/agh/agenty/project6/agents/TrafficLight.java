@@ -7,6 +7,8 @@ public class TrafficLight implements Agent {
 
     private int greenTime; //in milliseconds
     private int redTime;
+    private LightColor currentLightColor;
+
 
     public int getGreenTime() {
         return greenTime;
@@ -22,5 +24,13 @@ public class TrafficLight implements Agent {
 
     public void setRedTime(int redTime) {
         this.redTime = redTime;
+    }
+
+    public LightColor getCurrentLightColor() {
+        return currentLightColor;
+    }
+
+    public void setCurrentLightColor(LightColor currentLightColor) {
+        this.currentLightColor = currentLightColor;
     }
 }
