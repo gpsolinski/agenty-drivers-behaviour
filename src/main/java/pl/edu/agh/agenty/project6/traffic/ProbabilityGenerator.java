@@ -10,6 +10,14 @@ public class ProbabilityGenerator {
 	public static void setUp() {
 		random = new Random();
 	}
+
+    public static double randomDriversBehaviourIndex() {
+        return random.nextDouble();
+    }
+
+    public static int randomCarLength() {
+        return random.nextInt(3) + 1;
+    }
 	
 	public static int handleChangeProbability(int value) {
 		try {

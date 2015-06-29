@@ -1,9 +1,7 @@
-package pl.edu.agh.agenty.project6;
+package pl.edu.agh.agenty.project6.traffic;
 
-import pl.edu.agh.agenty.project6.agents.LightColor;
 import pl.edu.agh.agenty.project6.agents.TrafficLight;
 import pl.edu.agh.agenty.project6.agents.Car;
-import pl.edu.agh.agenty.project6.traffic.Road;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -36,28 +34,34 @@ public class Intersection {
         carsBeforeIntersectionY = new LinkedList<>();
         carsAfterIntersectionY = new LinkedList<>();
         carsAfterIntersectionX = new LinkedList<>();
-        trafficLightX = new TrafficLight();
-        trafficLightX.setCurrentLightColor(LightColor.RED);
-        trafficLightY = new TrafficLight();
-        trafficLightY.setCurrentLightColor(LightColor.RED);
+        trafficLightX = new TrafficLight(RoadConstants.RED_TIME, RoadConstants.YELLOW_TIME, RoadConstants.GREEN_TIME, 0);
+        trafficLightY = new TrafficLight(RoadConstants.RED_TIME, RoadConstants.YELLOW_TIME, RoadConstants.GREEN_TIME, RoadConstants.RED_TIME);
     }
 
-    public void addCarX(Car car) {
-        carsBeforeIntersectionX.add(car);
+    public Car addCarX(int position, int velocity) {
+        Car carToAdd = new Car(position, velocity, roadAfterIntersectionX);
+        carsBeforeIntersectionX.add(new Car(position, velocity, roadAfterIntersectionX));
+        return carToAdd;
     }
 
     public void crossIntersectionX(Car car) {
         carsBeforeIntersectionX.remove(car);
+        car.setPosition(0);
         carsAfterIntersectionX.add(car);
+        car.start();
     }
 
-    public void addCarY(Car car) {
-        carsBeforeIntersectionX.add(car);
+    public Car addCarY(int position, int velocity) {
+        Car carToAdd = new Car(position, velocity, roadAfterIntersectionY);
+        carsBeforeIntersectionX.add(carToAdd);
+        return carToAdd;
     }
 
     public void crossIntersectionY(Car car) {
-        carsBeforeIntersectionX.remove(car);
-        carsAfterIntersectionX.add(car);
+        carsBeforeIntersectionY.remove(car);
+        car.setPosition(0);
+        carsAfterIntersectionY.add(car);
+        car.start();
     }
 
     public Road getRoadBeforeIntersectionX() {

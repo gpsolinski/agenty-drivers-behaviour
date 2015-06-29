@@ -2,33 +2,29 @@ package pl.edu.agh.agenty.project6;
 
 import pl.edu.agh.agenty.project6.agents.Agent;
 import pl.edu.agh.agenty.project6.agents.Car;
-import pl.edu.agh.agenty.project6.agents.LightColor;
-import pl.edu.agh.agenty.project6.traffic.Road;
+import pl.edu.agh.agenty.project6.traffic.Intersection;
 import pl.edu.agh.agenty.project6.traffic.RoadConstants;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by grzegorz on 2015-05-20.
  */
-public class Platform implements Runnable {
+public class Platform extends Thread {
 
     private Map<String,Agent> agents;
     private Intersection intersection;
     private int countBeforeIntersectionX = 0;
     private int countBeforeIntersectionY = 0;
-    private Platform _instance = new Platform();
+    private static Platform _instance = new Platform();
 
     private Platform() {
         agents = new HashMap<>();
         intersection = new Intersection();
     }
 
-    public Platform getInstance() {
+    public static Platform getInstance() {
         return _instance;
     }
 
@@ -50,85 +46,40 @@ public class Platform implements Runnable {
 
     @Override
     public void run() {
-
-        Car car1X = new Car(0, 0);
-        Car car2X = new Car(4, 0);
-        Car car3X = new Car(5, 0);
-
-        Car car1Y = new Car(0, 0);
-        Car car2Y = new Car(2, 0);
-        Car car3Y = new Car(4, 0);
-
-        intersection.addCarX(car1X);
-        intersection.addCarX(car2X);
-        intersection.addCarX(car3X);
-        intersection.addCarX(car1Y);
-        intersection.addCarX(car2Y);
-        intersection.addCarX(car3Y);
-
         try {
+            intersection.trafficLightX.start();
+            System.out.print("Traffic lights -- added;");
+            intersection.trafficLightY.start();
+            System.out.print("Traffic lights | added;");
 
-            for (int time = 0; time < 200; time++) {
-                //ilość samochodów w danej odległości od świateł
-                int countBeforeIntersectionX = 0;
-                int countBeforeIntersectionY = 0;
-                for (int i = RoadConstants.LENGTH - 1; i >= RoadConstants.SAFE_DISTANCE ; i--) {
-                    if (intersection.getRoadBeforeIntersectionX().road.get(i))
-                        countBeforeIntersectionX++;
-
-                    if (intersection.getRoadBeforeIntersectionY().road.get(i))
-                        countBeforeIntersectionY++;
-
-                }
-//
-//                for (int i = RoadConstants.LENGTH - 1; i >= 0 ; i--) {
-//                    int diff = 0;
-//                    if (intersection.getRoadBeforeIntersectionY().road.get(i))
-//                        diff = 1;
-//
-//                    if (i == RoadConstants.LENGTH - 1 && intersection.getRoadBeforeIntersectionY().road.get(i))
-//                        countOfCarsInDistanceY.set(i, 1);
-//                    else {
-//                        countOfCarsInDistanceY.set(i, countOfCarsInDistanceY.get(i+1) + diff);
-//                    }
-//                }
-                boolean stoppedX = false;
-                boolean stoppedY = false;
-
-                for (Car car : intersection.getCarsAfterIntersectionX()) {
-                    if (car.getVelocity() == 0) {
-                        stoppedX = true;
-                        break;
+            while(true) {
+                Car carX = intersection.addCarX(0,0);
+                carX.start();
+                Thread.sleep(RoadConstants.CAR_PERIOD);
+                Car carY = intersection.addCarY(0,0);
+                carY.start();
+                intersection.getRoadBeforeIntersectionX().setLoggingThread(carX.getId());
+                intersection.getRoadAfterIntersectionY().setLoggingThread(carX.getId());
+                for (Car car : intersection.getCarsBeforeIntersectionX()) {
+                    if (car.isOutOfRoad() &&
+                            (intersection.trafficLightX.isGreen() ||
+                                    (intersection.trafficLightX.isYellow() && car.getDriversAggression() >= 0.3))) {
+                        intersection.crossIntersectionX(car);
                     }
                 }
-                if (stoppedX)
-                    intersection.trafficLightX.setCurrentLightColor(LightColor.RED);
 
-                for (Car car : intersection.getCarsAfterIntersectionY()) {
-                    if (car.getVelocity() == 0) {
-                        stoppedY = true;
-                        break;
+                for (Car car : intersection.getCarsBeforeIntersectionY()) {
+                    if (car.isOutOfRoad() &&
+                            (intersection.trafficLightX.isGreen() ||
+                                    (intersection.trafficLightX.isYellow() && car.getDriversAggression() >= 0.3))) {
+                        intersection.crossIntersectionY(car);
                     }
                 }
-                if (stoppedY)
-                    intersection.trafficLightY.setCurrentLightColor(LightColor.RED);
 
-                if (intersection.getRoadAfterIntersectionX().road.get(0)
-                        && intersection.getCarsAfterIntersectionX().get(0).getVelocity() == 0) {
-                    intersection.trafficLightX.setCurrentLightColor(LightColor.RED);
-                }
-
-                if (intersection.getRoadAfterIntersectionY().road.get(0)
-                        && intersection.getCarsAfterIntersectionY().get(0).getVelocity() == 0) {
-                    intersection.trafficLightY.setCurrentLightColor(LightColor.RED);
-                }
-
-
-                Thread.sleep(1000);
+                Thread.sleep(RoadConstants.TURN_PERIOD);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
     }
 }

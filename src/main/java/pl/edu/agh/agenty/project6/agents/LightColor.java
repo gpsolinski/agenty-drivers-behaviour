@@ -5,5 +5,6 @@ package pl.edu.agh.agenty.project6.agents;
  */
 public enum LightColor {
     RED,
+    YELLOW,
     GREEN
 }
