@@ -1,30 +1,36 @@
 package pl.edu.agh.agenty.project6;
 
-import pl.edu.agh.agenty.project6.traffic.Car;
-import pl.edu.agh.agenty.project6.traffic.ProbabilityGenerator;
-import pl.edu.agh.agenty.project6.traffic.Road;
+import pl.edu.agh.agenty.project6.traffic.Highway;
+import pl.edu.agh.agenty.project6.traffic.HighwaysManager;
+import pl.edu.agh.agenty.project6.traffic.entities.Tiredness;
+import pl.edu.agh.agenty.project6.traffic.random.ProbabilityGenerator;
 
 
 public class Main {
 	
     public static void main(String[] args) {
-        Road road = new Road();
-        
         ProbabilityGenerator.setUp();
         
-        Car car1 = new Car(0, 0, road);
-        Car car2 = new Car(4, 0, road);
-        Car car3 = new Car(5, 0, road);
+        Highway highwayNorth = new Highway();
+        highwayNorth.addCar(3, 3, Tiredness.REFRESHED);
+        highwayNorth.addCar(5, 1, Tiredness.TIRED);
+        highwayNorth.addCar(7, 1, Tiredness.REFRESHED);
+        Highway highwayEast = new Highway();
+        highwayEast.addCar(3, 3, Tiredness.REFRESHED);
+        highwayEast.addCar(5, 1, Tiredness.TIRED);
+        highwayEast.addCar(7, 1, Tiredness.REFRESHED);
+        Highway highwaySouth = new Highway();
+        highwaySouth.addCar(3, 3, Tiredness.REFRESHED);
+        highwaySouth.addCar(5, 1, Tiredness.TIRED);
+        highwaySouth.addCar(7, 1, Tiredness.REFRESHED);
+        Highway highwayWest = new Highway();
+        highwayWest.addCar(3, 3, Tiredness.REFRESHED);
+        highwayWest.addCar(5, 1, Tiredness.TIRED);
+        highwayWest.addCar(7, 1, Tiredness.REFRESHED);
         
-        Thread thread1 = (new Thread(car1));
-        Thread thread2 = (new Thread(car2));
-        Thread thread3 = (new Thread(car3));
+        HighwaysManager.setUp(highwayNorth, highwayEast, highwaySouth, highwayWest);
         
-        road.setLoggingThread(thread3.getId());
-        
-        thread1.start();
-        thread2.start();
-        thread3.start();
+        HighwaysManager.debug();
     }
     
 }
