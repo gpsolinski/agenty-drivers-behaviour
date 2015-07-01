@@ -1,7 +1,5 @@
 package pl.edu.agh.agenty.project6.agents;
 
-import pl.edu.agh.agenty.project6.traffic.RoadConstants;
-
 /**
  * Created by grzegorz on 2015-05-20.
  */
@@ -10,35 +8,39 @@ public class TrafficLight extends Thread implements Agent {
     private int greenTime; //in milliseconds
     private int yellowTime;
     private int redTime;
-    private int phase;
-    private LightColor currentLightColor;
+    private LightColor currentLightColorX;
+    private LightColor currentLightColorY;
 
-    public TrafficLight(int redTime, int yellowTime, int greenTime, int phase) {
-        this.redTime = redTime;
+    public TrafficLight(int greenTime, int yellowTime) {
+        this.greenTime = greenTime;
         this.yellowTime = yellowTime;
-        this.greenTime = greenTime;
-        this.phase = phase;
-        currentLightColor = LightColor.RED;
+        this.redTime = greenTime + yellowTime;
+        currentLightColorX = LightColor.RED;
+        currentLightColorY = LightColor.YELLOW;
     }
 
-    public boolean isGreen() {
-        return currentLightColor == LightColor.GREEN;
+    public boolean isGreenX() {
+        return currentLightColorX == LightColor.GREEN;
     }
 
-    public boolean isYellow() {
-        return currentLightColor == LightColor.YELLOW;
+    public boolean isGreenY() {
+        return currentLightColorY == LightColor.GREEN;
     }
 
-    public boolean isRed() {
-        return currentLightColor == LightColor.RED;
+    public boolean isYellowX() {
+        return currentLightColorX == LightColor.YELLOW;
     }
 
-    public int getGreenTime() {
-        return greenTime;
+    public boolean isYellowY() {
+        return currentLightColorY == LightColor.YELLOW;
     }
 
-    public void setGreenTime(int greenTime) {
-        this.greenTime = greenTime;
+    public boolean isRedX() {
+        return currentLightColorX == LightColor.RED;
+    }
+
+    public boolean isRedY() {
+        return currentLightColorY == LightColor.RED;
     }
 
     public int getYellowTime() {
@@ -49,39 +51,49 @@ public class TrafficLight extends Thread implements Agent {
         this.yellowTime = yellowTime;
     }
 
+    public int getGreenTime() {
+        return greenTime;
+    }
+
+    public void setGreenTime(int greenTime) {
+        this.greenTime = greenTime;
+    }
+
     public int getRedTime() {
         return redTime;
     }
 
-    public void setRedTime(int redTime) {
-        this.redTime = redTime;
+    public synchronized LightColor getCurrentLightColorX() {
+        return currentLightColorX;
     }
 
-    public synchronized LightColor getCurrentLightColor() {
-        return currentLightColor;
+    public void setCurrentLightColorX(LightColor currentLightColorX) {
+        this.currentLightColorX = currentLightColorX;
     }
 
-    public void setCurrentLightColor(LightColor currentLightColor) {
-        this.currentLightColor = currentLightColor;
+    public void setCurrentLightColorY(LightColor currentLightColorY) {
+        this.currentLightColorY = currentLightColorY;
     }
-
     @Override
     public void run() {
         try {
-            Thread.sleep(phase);
             while(true) {
-                switch (currentLightColor) {
+                switch (currentLightColorX) {
                     case RED:
-                        Thread.sleep(redTime);
-                        setCurrentLightColor(LightColor.GREEN);
+                        Thread.sleep(yellowTime);
+                        setCurrentLightColorY(LightColor.GREEN);
+                        Thread.sleep(greenTime);
+                        setCurrentLightColorY(LightColor.RED);
+                        setCurrentLightColorX(LightColor.YELLOW);
                         break;
                     case YELLOW:
                         Thread.sleep(yellowTime);
-                        setCurrentLightColor(LightColor.RED);
+                        setCurrentLightColorX(LightColor.GREEN);
                         break;
                     case GREEN:
                         Thread.sleep(greenTime);
-                        setCurrentLightColor(LightColor.YELLOW);
+                        setCurrentLightColorX(LightColor.RED);
+                        setCurrentLightColorY(LightColor.YELLOW);
                         break;
                     default:
                         break;
@@ -91,6 +103,32 @@ public class TrafficLight extends Thread implements Agent {
         } catch (InterruptedException e) {
             e.printStackTrace();
             System.err.println("TrafficLight agent's thread interrupted.");
+        }
+    }
+
+    public String toStringX() {
+        switch (currentLightColorX) {
+            case RED:
+                return "R";
+            case YELLOW:
+                return "Y";
+            case GREEN:
+                return "G";
+            default:
+                return "R";
+        }
+    }
+
+    public String toStringY() {
+        switch (currentLightColorY) {
+            case RED:
+                return "R";
+            case YELLOW:
+                return "Y";
+            case GREEN:
+                return "G";
+            default:
+                return "R";
         }
     }
 }

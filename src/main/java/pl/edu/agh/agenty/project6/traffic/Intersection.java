@@ -1,5 +1,6 @@
 package pl.edu.agh.agenty.project6.traffic;
 
+import pl.edu.agh.agenty.project6.agents.CarDirection;
 import pl.edu.agh.agenty.project6.agents.TrafficLight;
 import pl.edu.agh.agenty.project6.agents.Car;
 
@@ -22,8 +23,7 @@ public class Intersection {
     private List<Car> carsBeforeIntersectionY;
     private List<Car> carsAfterIntersectionY;
 
-    public TrafficLight trafficLightX;
-    public TrafficLight trafficLightY;
+    public TrafficLight trafficLight;
 
     public Intersection() {
         roadBeforeIntersectionX = new Road();
@@ -34,34 +34,41 @@ public class Intersection {
         carsBeforeIntersectionY = new LinkedList<>();
         carsAfterIntersectionY = new LinkedList<>();
         carsAfterIntersectionX = new LinkedList<>();
-        trafficLightX = new TrafficLight(RoadConstants.RED_TIME, RoadConstants.YELLOW_TIME, RoadConstants.GREEN_TIME, 0);
-        trafficLightY = new TrafficLight(RoadConstants.RED_TIME, RoadConstants.YELLOW_TIME, RoadConstants.GREEN_TIME, RoadConstants.RED_TIME);
+        trafficLight = new TrafficLight(RoadConstants.GREEN_TIME, RoadConstants.YELLOW_TIME);
     }
 
-    public Car addCarX(int position, int velocity) {
-        Car carToAdd = new Car(position, velocity, roadAfterIntersectionX);
-        carsBeforeIntersectionX.add(new Car(position, velocity, roadAfterIntersectionX));
+    public Car addCarX(int position, int velocity, CarDirection carDirection) {
+        Car carToAdd = new Car(position, velocity, carDirection, roadBeforeIntersectionX);
+        carsBeforeIntersectionX.add(carToAdd);
         return carToAdd;
     }
 
     public void crossIntersectionX(Car car) {
         carsBeforeIntersectionX.remove(car);
+        roadBeforeIntersectionX.road.set(roadBeforeIntersectionX.road.size()-1, false);
+        car.setRoad(roadAfterIntersectionX);
         car.setPosition(0);
+        car.setNotOutOfRoad(true);
         carsAfterIntersectionX.add(car);
-        car.start();
+        roadAfterIntersectionX.road.set(0, true);
+        new Thread(car).start();
     }
 
-    public Car addCarY(int position, int velocity) {
-        Car carToAdd = new Car(position, velocity, roadAfterIntersectionY);
-        carsBeforeIntersectionX.add(carToAdd);
+    public Car addCarY(int position, int velocity, CarDirection carDirection) {
+        Car carToAdd = new Car(position, velocity, carDirection, roadBeforeIntersectionY);
+        carsBeforeIntersectionY.add(carToAdd);
         return carToAdd;
     }
 
     public void crossIntersectionY(Car car) {
         carsBeforeIntersectionY.remove(car);
+        roadBeforeIntersectionY.road.set(roadBeforeIntersectionY.road.size()-1, false);
+        car.setRoad(roadAfterIntersectionY);
         car.setPosition(0);
+        car.setNotOutOfRoad(true);
         carsAfterIntersectionY.add(car);
-        car.start();
+        roadAfterIntersectionY.road.set(0, true);
+        new Thread(car).start();
     }
 
     public Road getRoadBeforeIntersectionX() {
@@ -120,19 +127,22 @@ public class Intersection {
         this.numberOfLanes = numberOfLanes;
     }
 
-    public TrafficLight getTrafficLightX() {
-        return trafficLightX;
+    public TrafficLight getTrafficLight() {
+        return trafficLight;
     }
 
-    public void setTrafficLightX(TrafficLight trafficLightX) {
-        this.trafficLightX = trafficLightX;
+    public void setTrafficLightX(TrafficLight trafficLight) {
+        this.trafficLight = trafficLight;
     }
 
-    public TrafficLight getTrafficLightY() {
-        return trafficLightY;
-    }
-
-    public void setTrafficLightY(TrafficLight trafficLightY) {
-        this.trafficLightY = trafficLightY;
+    public String toString() {
+        StringBuilder intersectionRepr = new StringBuilder();
+        intersectionRepr.append(roadBeforeIntersectionX);
+        intersectionRepr.append(trafficLight.toStringX());
+        intersectionRepr.append(roadAfterIntersectionX + "\n");
+        intersectionRepr.append(roadBeforeIntersectionY);
+        intersectionRepr.append(trafficLight.toStringY());
+        intersectionRepr.append(roadAfterIntersectionY + "\n");
+        return intersectionRepr.toString();
     }
 }

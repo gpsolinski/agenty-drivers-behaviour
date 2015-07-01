@@ -1,11 +1,14 @@
 package pl.edu.agh.agenty.project6;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import pl.edu.agh.agenty.project6.agents.Agent;
 import pl.edu.agh.agenty.project6.agents.Car;
 import pl.edu.agh.agenty.project6.traffic.Intersection;
+import pl.edu.agh.agenty.project6.traffic.ProbabilityGenerator;
 import pl.edu.agh.agenty.project6.traffic.RoadConstants;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -47,32 +50,58 @@ public class Platform extends Thread {
     @Override
     public void run() {
         try {
-            intersection.trafficLightX.start();
-            System.out.print("Traffic lights -- added;");
-            intersection.trafficLightY.start();
-            System.out.print("Traffic lights | added;");
+            intersection.trafficLight.start();
 
             while(true) {
-                Car carX = intersection.addCarX(0,0);
-                carX.start();
+                debug();
+                if (ProbabilityGenerator.addAnotherCar(RoadConstants.CAR_TRAFFIC)
+                        && !intersection.getRoadBeforeIntersectionX().road.get(0)) {
+                    Car carX = intersection.addCarX(0, 0, ProbabilityGenerator.getRandomCarDirection(RoadConstants.TURN_INCLINATION));
+                    new Thread(carX).start();
+                }
                 Thread.sleep(RoadConstants.CAR_PERIOD);
-                Car carY = intersection.addCarY(0,0);
-                carY.start();
-                intersection.getRoadBeforeIntersectionX().setLoggingThread(carX.getId());
-                intersection.getRoadAfterIntersectionY().setLoggingThread(carX.getId());
-                for (Car car : intersection.getCarsBeforeIntersectionX()) {
-                    if (car.isOutOfRoad() &&
-                            (intersection.trafficLightX.isGreen() ||
-                                    (intersection.trafficLightX.isYellow() && car.getDriversAggression() >= 0.3))) {
-                        intersection.crossIntersectionX(car);
+                if (ProbabilityGenerator.addAnotherCar(RoadConstants.CAR_TRAFFIC)
+                        && !intersection.getRoadBeforeIntersectionY().road.get(0)) {
+                    Car carY = intersection.addCarY(0, 0, ProbabilityGenerator.getRandomCarDirection(RoadConstants.TURN_INCLINATION));
+                    new Thread(carY).start();
+                }
+//                intersection.getRoadBeforeIntersectionX().setLoggingThread(carX.getId());
+//                intersection.getRoadAfterIntersectionY().setLoggingThread(carX.getId());
+                List<Car> carsBeforeIntersectionX = intersection.getCarsBeforeIntersectionX();
+                if (!carsBeforeIntersectionX.isEmpty()) {
+                    Car lastCarX = carsBeforeIntersectionX.get(0);
+                    if (lastCarX.isOutOfRoad() &&
+                            (intersection.trafficLight.isGreenX() ||
+                                    (intersection.trafficLight.isYellowX() && lastCarX.getDriversAggression() >= RoadConstants.AGRESSION_THRESHOLD))) {
+                        intersection.crossIntersectionX(lastCarX);
                     }
                 }
 
-                for (Car car : intersection.getCarsBeforeIntersectionY()) {
-                    if (car.isOutOfRoad() &&
-                            (intersection.trafficLightX.isGreen() ||
-                                    (intersection.trafficLightX.isYellow() && car.getDriversAggression() >= 0.3))) {
-                        intersection.crossIntersectionY(car);
+                List<Car> carsBeforeIntersectionY = intersection.getCarsBeforeIntersectionY();
+                if (!carsBeforeIntersectionY.isEmpty()) {
+                    Car lastCarY = carsBeforeIntersectionY.get(0);
+                    if (lastCarY.isOutOfRoad() &&
+                            (intersection.trafficLight.isGreenY() ||
+                                    (intersection.trafficLight.isYellowY() && lastCarY.getDriversAggression() >= RoadConstants.AGRESSION_THRESHOLD))) {
+                        intersection.crossIntersectionY(lastCarY);
+                    }
+                }
+
+                List<Car> carsAfterIntersectionX = intersection.getCarsAfterIntersectionX();
+                if (!carsAfterIntersectionX.isEmpty()) {
+                    Car lastCarX = carsAfterIntersectionX.get(0);
+                    if (lastCarX.isOutOfRoad()) {
+                        intersection.getRoadAfterIntersectionX().road.set(lastCarX.getPosition(), false);
+                        carsAfterIntersectionX.remove(lastCarX);
+                    }
+                }
+
+                List<Car> carsAfterIntersectionY = intersection.getCarsAfterIntersectionY();
+                if (!carsAfterIntersectionY.isEmpty()) {
+                    Car lastCarY = carsAfterIntersectionY.get(0);
+                    if (lastCarY.isOutOfRoad()) {
+                        intersection.getRoadAfterIntersectionY().road.set(lastCarY.getPosition(), false);
+                        carsAfterIntersectionY.remove(lastCarY);
                     }
                 }
 
@@ -81,5 +110,10 @@ public class Platform extends Thread {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public void debug() {
+        System.out.println(intersection);
+        System.out.println("==========================================================");
     }
 }

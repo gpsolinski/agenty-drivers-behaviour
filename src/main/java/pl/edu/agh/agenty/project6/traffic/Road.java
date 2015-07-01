@@ -38,6 +38,7 @@ public class Road {
 	public boolean move(int position, int distance) {
 		if (position + distance >= road.size()) {
 			road.set(position, false);
+            road.set(road.size() - 1, true);
 			return false;
 		}
 			
@@ -49,27 +50,23 @@ public class Road {
 		}
 		
 		road.set(i, true);
-		try {
-			barrier.await();
-		} catch (InterruptedException | BrokenBarrierException e) {
-			e.printStackTrace();
-		}
-		if (Thread.currentThread().getId() == loggingThread)
-			debug();
-		
-		
+
 		return true;
 	}
 	
 	public void debug() {
-		StringBuilder roadRepresentation = new StringBuilder();
-		for (Boolean element : road) {
-			if (element)
-				roadRepresentation.append("[ ]");
-			else
-				roadRepresentation.append("-");
-		}
-		System.out.println(roadRepresentation.toString());
+		System.out.println(this);
 	}
-	
+
+    public String toString() {
+
+        StringBuilder roadRepresentation = new StringBuilder();
+        for (Boolean element : road) {
+            if (element)
+                roadRepresentation.append("[ ]");
+            else
+                roadRepresentation.append("-");
+        }
+        return roadRepresentation.toString();
+    }
 }
