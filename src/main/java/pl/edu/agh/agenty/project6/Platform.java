@@ -1,44 +1,27 @@
 package pl.edu.agh.agenty.project6;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import pl.edu.agh.agenty.project6.agents.Agent;
 import pl.edu.agh.agenty.project6.agents.Car;
-import pl.edu.agh.agenty.project6.agents.CarDirection;
 import pl.edu.agh.agenty.project6.traffic.CollisionException;
 import pl.edu.agh.agenty.project6.traffic.Intersection;
 import pl.edu.agh.agenty.project6.traffic.ProbabilityGenerator;
 import pl.edu.agh.agenty.project6.traffic.RoadConstants;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by grzegorz on 2015-05-20.
  */
 public class Platform extends Thread {
 
-    private Map<String,Agent> agents;
     private Intersection intersection;
-    private int countBeforeIntersectionX = 0;
-    private int countBeforeIntersectionY = 0;
     private static Platform _instance = new Platform();
 
     private Platform() {
-        agents = new HashMap<>();
         intersection = new Intersection();
     }
 
     public static Platform getInstance() {
         return _instance;
-    }
-
-    public void registerAgent(String id, Agent agent) {
-        agents.put(id, agent);
-    }
-
-    public void deregisterAgent(String id) {
-        agents.remove(id);
     }
 
     public Intersection getIntersection() {

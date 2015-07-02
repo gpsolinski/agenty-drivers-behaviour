@@ -3,7 +3,7 @@ package pl.edu.agh.agenty.project6.agents;
 /**
  * Created by grzegorz on 2015-05-20.
  */
-public class TrafficLight extends Thread implements Agent {
+public class TrafficLight extends Thread {
 
     private int greenTime; //in milliseconds
     private int yellowTime;

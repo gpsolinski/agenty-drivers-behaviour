@@ -12,8 +12,8 @@ public final class RoadConstants {
     public static final int CAR_PERIOD = 100;
     public static final int TURN_PERIOD = 500;
 
-    public static final double CAR_TRAFFIC = 0.20;
-    public static final double TURN_INCLINATION = 0.20;
+    public static final double CAR_TRAFFIC = 0.04;
+    public static final double TURN_INCLINATION = 0.15;
     public static final double AGRESSION_THRESHOLD = 0.30;
 
 	private RoadConstants(){}

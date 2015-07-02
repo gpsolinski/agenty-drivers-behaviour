@@ -5,7 +5,7 @@ import pl.edu.agh.agenty.project6.traffic.ProbabilityGenerator;
 import pl.edu.agh.agenty.project6.traffic.Road;
 import pl.edu.agh.agenty.project6.traffic.RoadConstants;
 
-public class Car implements Agent, Runnable  {
+public class Car implements Runnable  {
     private int velocity;
     private int position;
     private Road road;
