@@ -9,7 +9,7 @@ public final class RoadConstants {
     public static final int YELLOW_TIME = 800;
     public static final int GREEN_TIME = 2000;
 
-    public static final int CAR_PERIOD = 250;
+    public static final int CAR_PERIOD = 100;
     public static final int TURN_PERIOD = 500;
 
     public static final double CAR_TRAFFIC = 0.20;

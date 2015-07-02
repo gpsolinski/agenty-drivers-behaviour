@@ -10,11 +10,13 @@ public class Car implements Agent, Runnable  {
     private int position;
     private Road road;
     private boolean notOutOfRoad;
-    private CarDirection carDirection;
+    private final CarDirection carDirection;
 
     private double driversAggression;
     private double driversOpacity;
     private double length;
+
+    private long reachingIntersectionTime;
 
     public Car(int position, int velocity, CarDirection carDirection, Road road) {
         this.velocity = velocity;
@@ -22,6 +24,7 @@ public class Car implements Agent, Runnable  {
         this.carDirection = carDirection;
         this.road = road;
         notOutOfRoad = true;
+        reachingIntersectionTime = 0;
     }
 
     public void setRoad(Road road) {
@@ -61,13 +64,13 @@ public class Car implements Agent, Runnable  {
             move();
 
             try {
-                Thread.sleep(200);
+                Thread.sleep(600);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
 
-//        System.out.println("Car reached the end of the road!");
+        reachingIntersectionTime = System.currentTimeMillis();
     }
 
     private void acceleration() {
@@ -103,4 +106,24 @@ public class Car implements Agent, Runnable  {
         return position;
     }
 
+    public long getReachingIntersectionTime() {
+        return reachingIntersectionTime;
+    }
+
+    public CarDirection getCarDirection() {
+        return carDirection;
+    }
+
+    public String toString() {
+        switch (carDirection) {
+            case RIGHT:
+                return "R";
+            case STRAIGHT:
+                return "S";
+            case LEFT:
+                return "L";
+            default:
+                return "S";
+        }
+    }
 }

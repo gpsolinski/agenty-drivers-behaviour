@@ -46,7 +46,7 @@ public class Road {
 		int i = position;
 		for (; (i != (position+distance)) && !road.get(i); i++);
 		if (road.get(i)) {
-			throw new RuntimeException("Collision at position " + position);
+			throw new CollisionException(position);
 		}
 		
 		road.set(i, true);
@@ -63,7 +63,7 @@ public class Road {
         StringBuilder roadRepresentation = new StringBuilder();
         for (Boolean element : road) {
             if (element)
-                roadRepresentation.append("[ ]");
+                roadRepresentation.append("||");
             else
                 roadRepresentation.append("-");
         }
